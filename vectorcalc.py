@@ -31,6 +31,15 @@ class Field:
     def __radd__(self, other):
         return self + other
 
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            result = self.copy()
+            result.elements *= other
+            return result
+
+    def __rmul__(self, other):
+        return self * other
+
     def copy(self):
         return Field(self.elements.copy())
 
@@ -57,7 +66,5 @@ class VectorField(Field):
 
     def div(self):
         gradients = [np.gradient(self.elements[..., i], axis=self.shape[-1] - i - 1) for i in range(self.shape[-1])]
-        print(np.shape(gradients))
         divergence = np.sum(gradients, axis=0)
-        print(divergence.shape)
         return ScalarField(divergence)
